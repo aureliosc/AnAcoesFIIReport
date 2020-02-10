@@ -1,6 +1,3 @@
-# Projeto de script PHP para geração de relatórios de ações ou fundos imobiliários
-# com base em indicadores fundamentalistas, via extração de dados de sites de listagens de ações / FIIs.
-
 # Para a geração de relatório:
 # - de ações:
 php selFundAcoes.php
