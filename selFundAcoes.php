@@ -5,7 +5,7 @@ require 'libs/XPathWrapper.php';
 require 'perfisConfigAcoes.php';
 
 /* Load the HTML */
-$strUrl = "https://www.fundamentus.com.br/resultado.php";
+$strUrl = "http://www.fundamentus.com.br/resultado.php";
 
 /**
  * Legenda:

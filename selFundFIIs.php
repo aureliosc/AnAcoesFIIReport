@@ -37,7 +37,7 @@ require 'libs/php-export-data.class.php';
 require 'libs/XPathWrapper.php';
 
 /* Load the HTML */
-$strUrl = "https://www.fundsexplorer.com.br/ranking";
+$strUrl = "http://www.fundsexplorer.com.br/ranking";
 
 $strTipoSaida = 'csv';
 
