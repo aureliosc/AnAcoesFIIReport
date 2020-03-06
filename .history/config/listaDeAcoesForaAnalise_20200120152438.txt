@@ -1,0 +1,10 @@
+BNBR3: BANCO NORDESTE DO BRASIL
+IDVL3: BANCO INDUSVAL
+BMEB3: BANCO MERCANTIL DO BRASIL
+VALE3: Não tem responsabilidade ambiental.
+VULC3: VULCABRAS - Não gosto da qualidade dos produtos.
+BRSR3: Banrisul - Free Float de 1,9% em ON e Governo do Estado do Rio Grande do Sul 98% ON 0,37% PN
+TRPL3: Trans Paulista - Free Float de 0,7% ON, Tag Along 80% ON e 0% PN (má governança)
+FESA3: Ferbasa - Free Float 1,1% ON, Tag Along 80% ON e 0% PN (má governança)
+EEEL3: CEEE-GT - Free Float 0,6% ON, Tag Along 80% ON e 0% PN (má governança) -> Companhia Estadual de Energia Elétrica Participações - CEEE-Par 67% ON e 0,66% PN
+EALT3: Electro Aço Altona - Free Float 4% ON, Tag Along 80% ON e 0% PN (má governança) -> WERNER SA IND. E COM. 84% ON e 0,76% PN

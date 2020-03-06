@@ -40,15 +40,15 @@ class PerfilConfiguracao {
     public $strTipoSaida = 'csv';
     public $numDYMin = 0;
     public $numDYMax = 12;
-    public $numPLMin = 3;
-    public $numPLMax = 20;
+    public $numPLMin = 3; // Ideal: 3 <= PL <= 20
+    public $numPLMax = 20; // Ideal: 3 <= PL <= 20
     public $numPVPMax = 4;
     public $numPEBITMin = 0; // Ideal P/EBIT >= 0
     public $numROEMin = 10; // Ideal > 20%
     public $numROICMin = 0;
     public $numPatrimLiqMin = 0;
     public $numDBPatrimMin = 0;
-    public $numDBPatrimMax = 0.5; // Ideal 0.5
+    public $numDBPatrimMax = 0.5; // Ideal: 0 <= DBPatrimMax <= 0.5;
     public $bolPermiteCrescNeg = true; // Default = false
     public $numCrescRec5aMin = 95;
     public $numCrescRec5aMax = 100;
@@ -72,7 +72,7 @@ class PerfilConfiguracao {
         $this->numDYMax = 12;
         $this->numPLMin = 3;
         $this->numPLMax = 20;
-        $this->numPVPMax = 4;
+        $this->numPVPMax = 1000; // Praticamente anula esse parâmetro
         $this->numPEBITMin = 0; // Ideal P/EBIT >= 0
         $this->numROEMin = 10; // Ideal > 20%
         $this->numROICMin = 0;
@@ -92,6 +92,20 @@ class PerfilConfiguracao {
         $this->strPapeisForaDeAnalise = 'config/listaDeAcoesForaAnalise.txt'; // 'listaDeAcoesForaAnalise.txt';
         $this->bolListarTodasAcoes = false; // Default: FALSE
         $this->strNomeArquivo = 'resultados/analise_acoes_onip';
+    }
+
+    public function setNovoDefault() {
+        $this->setDefault();
+        $this->strTipoSaida = 'csv';
+        $this->strNomeArquivo = 'resultados/analise_acoes_onip';
+    }
+
+    public function setPerfil2() {
+        $this->setDefault();        
+        $this->numPLMax = 25; // Ideal: 20
+        $this->numDBPatrimMax = 1.5; // Ideal 0.5
+        $this->numPVPMax = 1000; // Praticamente anula erra indicador
+        $this->strNomeArquivo = 'resultados/analise_acoes_on_p2';
     }
 
     public function setTodos() {

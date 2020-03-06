@@ -37,19 +37,19 @@ require 'libs/php-export-data.class.php';
 require 'libs/XPathWrapper.php';
 
 /* Load the HTML */
-$strUrl = "http://www.fundsexplorer.com.br/ranking";
+$strUrl = "https://www.fundsexplorer.com.br/ranking";
 
 $strTipoSaida = 'csv';
-
+ 
 $numMinDY01M = 0.4;
 $numMinDY03M = 1;
 $numMinDY06M = 2;
 $numMinDY12M = 4;
 $numMaxDY12M = 10;
 $numRentabPatrMin = -10;
-$numAtivosMin = 1;
+$numAtivosMin = 0;
 $fatorToleranciaMin = 0.50;
-$fatorToleranciaMax = 0.15;
+$fatorToleranciaMax = 0.10;
 
 $strNomeArquivo = 'resultados/analise_fiis_' . (1-$fatorToleranciaMin) . '-' . (1+$fatorToleranciaMax) . '_' . $numAtivosMin;
 
@@ -156,7 +156,7 @@ $htmlContent = file_get_contents($strUrl);
                 }
             }
             else if (startsWith($item, 'Rentab. Patr.')) {
-                if ($celFloat < 0) {
+                if ($celFloat < $numRentabPatrMin) {
                     $isToAdd = false;
                 }
             }
@@ -190,7 +190,7 @@ $htmlContent = file_get_contents($strUrl);
 	$aDataTableDetailHTML = $aTempData; unset($aTempData);
 	
     // print_r($aDataTableDetailHTML);
-    echo 'Relatório gerado em :' . $strNomeArquivo . ' com ' . sizeof($aDataTableDetailHTML) . ' FIIs.';
+    echo 'Relatório gerado em ' . $strNomeArquivo . ' com ' . sizeof($aDataTableDetailHTML) . ' FIIs.';
 	// exit();
 
 	function startsWith($haystack, $needle) {

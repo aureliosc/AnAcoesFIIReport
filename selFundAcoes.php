@@ -42,7 +42,9 @@ $strUrl = "http://www.fundamentus.com.br/resultado.php";
  */
 
 $config = new PerfilConfiguracao();
-$config->setDefault();
+$config->setNovoDefault();
+// $config->setPerfil2();
+// $config->setDefault();
 // $config->setDYMin4ComCresc();
 // $config->setDYMin4Fileh();
 // $config->setTodos(); // Rodar 1x na vida e outra na morte: demora muito.
@@ -62,6 +64,8 @@ $htmlContent = file_get_contents($strUrl);
 	$Header = $DOM->getElementsByTagName('th');
 	$Detail = $DOM->getElementsByTagName('td');
 
+    $aDataTableHeaderHTML = array();
+
     //#Get header name of the table
 	foreach($Header as $NodeHeader) {
 		$aDataTableHeaderHTML[] = trim($NodeHeader->textContent);
@@ -76,21 +80,6 @@ $htmlContent = file_get_contents($strUrl);
 		$i = $i + 1;
 		$j = $i % count($aDataTableHeaderHTML) == 0 ? $j + 1 : $j;
 	}
-    
-    array_unshift($aDataTableHeaderHTML , 'Segmento');
-    array_unshift($aDataTableHeaderHTML , 'Subsetor');
-    array_unshift($aDataTableHeaderHTML , 'Setor');
-    array_unshift($aDataTableHeaderHTML , 'Nome');
-
-    define("NUM_COL_ANT", 4);
-
-    // print_r($aDataTableHeaderHTML); exit();
-
-    if ($config->strTipoSaida == 'csv') {
-        $exporter = new ExportDataCSV('file', $config->strNomeArquivo . '.csv');
-    } else {
-        $exporter = new ExportDataExcel('file', $config->strNomeArquivo . '.xls');
-    }
 
     $aDataPapelBlueChip = array();
     if (!empty($config->strConfigListBlueChips)) {
@@ -123,6 +112,31 @@ $htmlContent = file_get_contents($strUrl);
         // print_r($aDataPapelSmallCaps); exit();
     }
 
+    $numColsPre = 0;
+    $isToAnalisarTipo = false;
+    if (count($aDataPapelBlueChip) > 0 || count($aDataPapelSmallCaps) > 0) {
+        $isToAnalisarTipo = true;
+        array_unshift($aDataTableHeaderHTML, 'Tipo');
+        $numColsPre = $numColsPre + 1;
+    }
+
+    array_unshift($aDataTableHeaderHTML , 'Segmento');
+    array_unshift($aDataTableHeaderHTML , 'Subsetor');
+    array_unshift($aDataTableHeaderHTML , 'Setor');
+    array_unshift($aDataTableHeaderHTML , 'Nome');
+    $numColsPre = $numColsPre + 4;
+
+    define("NUM_COL_ANT", $numColsPre);
+
+    // print_r($aDataTableHeaderHTML); exit();
+    // print_r(NUM_COL_ANT); exit();
+
+    if ($config->strTipoSaida == 'csv') {
+        $exporter = new ExportDataCSV('file', $config->strNomeArquivo . '.csv');
+    } else {
+        $exporter = new ExportDataExcel('file', $config->strNomeArquivo . '.xls');
+    }
+
     $numColsPos = 0;
 
     {
@@ -131,13 +145,6 @@ $htmlContent = file_get_contents($strUrl);
         $numColsPos = $numColsPos + 2;
     }
 
-    $isToAnalisarTipo = false;
-    if (count($aDataPapelBlueChip) > 0 || count($aDataPapelSmallCaps) > 0) {
-        $isToAnalisarTipo = true;
-        array_push($aDataTableHeaderHTML, 'Tipo');
-        $numColsPos = $numColsPos + 1;
-    }
-    
     $aDataPapelAnalise = array();
     if (!empty($config->strAnaliseEspecifica)) {
         if ($file = fopen($config->strAnaliseEspecifica, "r")) {
@@ -179,6 +186,7 @@ $htmlContent = file_get_contents($strUrl);
     $exporter->initialize(); // starts streaming data to web browser
     $exporter->addRow($aDataTableHeaderHTML); // to Excel
 
+    $aTempData = array();
     $acoesAnalisadas = array();
     //#Get row data/detail table with header name as key and outer array index as row number
 	for($i = 0; $i < count($aDataTableDetailHTML); $i++) {
@@ -381,6 +389,17 @@ $htmlContent = file_get_contents($strUrl);
             $strXpathSubsetor = "/html/body/main/div[3]/div/div[3]/div/div[2]/div/div/div/a/strong";
             $strXpathSegmento = "/html/body/main/div[3]/div/div[3]/div/div[3]/div/div/div/a/strong";
             try {
+                
+                if ($isToAnalisarTipo) {
+                    if (in_array($strPapel, $aDataPapelBlueChip)) {
+                        array_unshift($aTempDataRow, 'BLUE CHIP');
+                    } else if (in_array($strPapel, $aDataPapelSmallCaps)) {
+                        array_unshift($aTempDataRow, 'SMALL CAP');
+                    } else {
+                        array_unshift($aTempDataRow, '');
+                    }
+                }
+
                 $xpw = new XPathWrapper($strUrlTemp);
                 $nome = $xpw->getXPathValueOf($strXpathNome);
                 $setor = $xpw->getXPathValueOf($strXpathSetor);
@@ -401,18 +420,7 @@ $htmlContent = file_get_contents($strUrl);
                 }
                 array_push($aTempDataRow, $aDataFreeFloat[0]); // Free Float ON
                 array_push($aTempDataRow, $aDataFreeFloat[1]); // Free Float PN
-                if ($isToAnalisarTipo) {
-                    if (in_array($strPapel, $aDataPapelBlueChip)) {
-                        array_push($aTempDataRow, 'BLUE CHIP');
-                    }
-                    else if (in_array($strPapel, $aDataPapelSmallCaps)) {
-                        array_push($aTempDataRow, 'SMALL CAP');
-                    }
-                    else {
-                        array_push($aTempDataRow, '');
-                    }
-                }
-
+                
                 if (count($aDataPapelAnalise) > 0) {
                     if (in_array($strPapel, $aDataPapelAnalise)) {
                         if ($isToAddForcado) {
@@ -451,7 +459,7 @@ $htmlContent = file_get_contents($strUrl);
 	$aDataTableDetailHTML = $aTempData; unset($aTempData);
 	
     // print_r($aDataTableDetailHTML);
-    echo 'Relatório gerado em ' . $config->strNomeArquivo . ' com ' . sizeof($aDataTableDetailHTML) . ' papéis listados.';
+    echo 'Relatório gerado em ' . $config->strNomeArquivo . ' com ' . sizeof($aDataTableDetailHTML) . ' empresas listadas.';
 	// exit();
 
 	function startsWith($haystack, $needle) {
@@ -510,7 +518,8 @@ $htmlContent = file_get_contents($strUrl);
 
 	        //#Get row data/detail table without header name as key
 	    $i = 0;
-	    $j = 0;
+        $j = 0;
+        $aDataTableDetailHTML = array();
 	    foreach($Detail as $sNodeDetail) {
 	    	$aDataTableDetailHTML[$j][] = trim($sNodeDetail->textContent);
 		    $i = $i + 1;
